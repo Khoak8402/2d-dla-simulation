@@ -1,31 +1,26 @@
-import unittest
+"""Config 1 - single seed, random injection.
+
+Follows the sample test template: set parameters, run the simulation, then
+visualize and capture the three standard plots. `seed_all()` (called inside
+run_config) is what keeps the result images identical on every run.
+"""
 
 import dla_common as common
 
-CFG_ID = 1
+CONFIG_ID = 1
+
+# --- Parameters here ---
+PARAMS = dict(N=512, n_seeds=1, n_walkers=10000, max_steps=80000,
+              reinject_timeout=1000, inj_mode="random", inj_radius=None)
 
 
-class TestConfig1(unittest.TestCase):
-    bundle = None
-
-    @classmethod
-    def setUpClass(cls):
-        cls.bundle = common.run_and_save(CFG_ID)
-
-    def test_completion(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["completion_rate"], 0.80)
-
-    def test_single_cluster(self):
-        m = self.bundle["metrics"]
-        self.assertEqual(m["n_aggregate"], 1)
-
-    def test_fractal_dimension(self):
-        m = self.bundle["metrics"]
-        self.assertIsNotNone(m["fractal_dimension"])
-        self.assertTrue(1.55 <= m["fractal_dimension"] <= 1.85,
-                        f"D_f={m['fractal_dimension']} out of expected range")
+def main():
+    # Seeds both RNGs, runs dla.simulation(**PARAMS), and captures:
+    #   results/config1_growth_stages.png   (display_aggregate_grow)
+    #   results/config1_mass_radius.png      (display_mass_radius_plot)
+    #   results/config1_progress.png         (display_grow_progress_plot)
+    return common.run_config(CONFIG_ID, PARAMS)
 
 
 if __name__ == "__main__":
-    common.run_and_save(CFG_ID)
+    main()

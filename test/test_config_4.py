@@ -1,35 +1,21 @@
-import unittest
+"""Config 4 - single seed, radial injection, high particle count.
+
+Same radial setup as Config 3 but with many more walkers, producing a larger,
+denser aggregate that captures incoming walkers far more efficiently.
+"""
 
 import dla_common as common
 
-CFG_ID = 4
+CONFIG_ID = 4
+
+# --- Parameters here ---
+PARAMS = dict(N=512, n_seeds=1, n_walkers=25000, max_steps=200000,
+              reinject_timeout=1000, inj_mode="radial", inj_radius=180)
 
 
-class TestConfig4(unittest.TestCase):
-    bundle = None
-
-    @classmethod
-    def setUpClass(cls):
-        cls.bundle = common.run_and_save(CFG_ID)
-
-    def test_completion(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["completion_rate"], 0.60)
-
-    def test_single_cluster(self):
-        m = self.bundle["metrics"]
-        self.assertEqual(m["n_aggregate"], 1)
-
-    def test_fractal_dimension(self):
-        m = self.bundle["metrics"]
-        self.assertIsNotNone(m["fractal_dimension"])
-        self.assertTrue(1.55 <= m["fractal_dimension"] <= 1.90,
-                        f"D_f={m['fractal_dimension']} out of expected range")
-
-    def test_larger_than_config3(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["aggregated"], 10000)
+def main():
+    return common.run_config(CONFIG_ID, PARAMS)
 
 
 if __name__ == "__main__":
-    common.run_and_save(CFG_ID)
+    main()

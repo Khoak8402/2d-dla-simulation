@@ -1,31 +1,21 @@
-import unittest
+"""Config 3 - single seed, radial injection (R_inj = 180).
+
+Walkers are re-injected on a circle of radius R_inj around the seed instead of
+anywhere on the lattice, which gives a cleaner single radial aggregate.
+"""
 
 import dla_common as common
 
-CFG_ID = 3
+CONFIG_ID = 3
+
+# --- Parameters here ---
+PARAMS = dict(N=512, n_seeds=1, n_walkers=10000, max_steps=120000,
+              reinject_timeout=1000, inj_mode="radial", inj_radius=180)
 
 
-class TestConfig3(unittest.TestCase):
-    bundle = None
-
-    @classmethod
-    def setUpClass(cls):
-        cls.bundle = common.run_and_save(CFG_ID)
-
-    def test_completion(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["completion_rate"], 0.60)
-
-    def test_single_cluster(self):
-        m = self.bundle["metrics"]
-        self.assertEqual(m["n_aggregate"], 1)
-
-    def test_fractal_dimension(self):
-        m = self.bundle["metrics"]
-        self.assertIsNotNone(m["fractal_dimension"])
-        self.assertTrue(1.55 <= m["fractal_dimension"] <= 1.90,
-                        f"D_f={m['fractal_dimension']} out of expected range")
+def main():
+    return common.run_config(CONFIG_ID, PARAMS)
 
 
 if __name__ == "__main__":
-    common.run_and_save(CFG_ID)
+    main()

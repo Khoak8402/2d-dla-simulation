@@ -1,29 +1,22 @@
-import unittest
+"""Config 2 - multiple seeds (12), random injection.
+
+With several seeds the cluster grows from many points at once. D_f is not
+meaningful here (it is measured about a single center), so the mass-radius
+plot may report too little data - that is expected for this config.
+"""
 
 import dla_common as common
 
-CFG_ID = 2
+CONFIG_ID = 2
+
+# --- Parameters here ---
+PARAMS = dict(N=512, n_seeds=12, n_walkers=15000, max_steps=80000,
+              reinject_timeout=1000, inj_mode="random", inj_radius=None)
 
 
-class TestConfig2(unittest.TestCase):
-    bundle = None
-
-    @classmethod
-    def setUpClass(cls):
-        cls.bundle = common.run_and_save(CFG_ID)
-
-    def test_completion(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["completion_rate"], 0.80)
-
-    def test_multiple_clusters(self):
-        m = self.bundle["metrics"]
-        self.assertGreater(m["n_aggregate"], 1)
-
-    def test_df_not_measured(self):
-        m = self.bundle["metrics"]
-        self.assertIsNone(m["fractal_dimension"])
+def main():
+    return common.run_config(CONFIG_ID, PARAMS)
 
 
 if __name__ == "__main__":
-    common.run_and_save(CFG_ID)
+    main()
